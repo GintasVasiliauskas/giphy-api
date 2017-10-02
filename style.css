@@ -1,0 +1,24 @@
+button {
+  margin:10px 15px;
+}
+
+form {
+  margin: 40px 0;
+}
+
+#gifs{
+  min-height: 400px;
+  background-color: gray;
+}
+
+.item {
+  float:left;
+  margin: 20px;
+
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}

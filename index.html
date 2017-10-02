@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Giphy API</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="buttons"></div>
+
+  <form id="listForm">
+    <label for="listItem">Add to list</label>
+    <input type="text" id="listItem">
+    <input id="listButton" type="submit" value="Add to list">
+  </form>
+
+
+  <div id="gifs" class="clearfix"></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+  var listOfButtons = ["Lion", "baboon", "elephant", "squirrel", "cat","duck","fox","otter"]
+
+
+  function renderButtons() {
+    $("#buttons").empty();
+    for (var i = 0; i < listOfButtons.length; i++) {
+      var a = $("<button>");
+      a.addClass("btn");
+      a.attr("data-name", listOfButtons[i]);
+      a.text(listOfButtons[i]);
+      $("#buttons").append(a);
+    }
+  }
+
+  $("#listButton").on("click", function(event) {
+    event.preventDefault();
+    var listedItem = $("#listItem").val().trim();
+    listOfButtons.push(listedItem);
+    renderButtons();
+  });
+
+
+
+function displayGIF() {
+
+  var gifQuery = $(this).attr("data-name");
+  var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+    gifQuery + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+  $.ajax({
+    url: queryURL,
+    method: "GET"
+  }).done(function(response) {
+    var results = response.data;
+    console.log(results);
+
+    for (var i = 0; i < results.length; i++) {
+      var gifDiv = $("<div class='item clearfix'>");
+
+      var rating = results[i].rating;
+      var p = $("<p>").text("Rating: " + rating);
+
+      var gifImage = $("<img>");
+      gifImage.addClass("gif");
+      gifImage.attr("src", results[i].images.fixed_height_still.url);
+      gifImage.attr("data-still", results[i].images.fixed_height_still.url);
+      gifImage.attr("data-animate", results[i].images.fixed_height.url);
+      gifImage.attr("data-state", "animate");
+      gifDiv.prepend(p);
+      gifDiv.prepend(gifImage);
+
+      $("#gifs").prepend(gifDiv);
+    }
+  });
+
+}
+
+
+$(document).on("click", ".gif", function() {
+  var state = $(this).attr("data-state");
+  if (state==="still") {
+    $(this).attr("src",$(this).attr("data-still"))
+    $(this).attr("data-state","animate")
+  }
+
+  else if (state ==="animate"){
+    $(this).attr("src",$(this).attr("data-animate"))
+    $(this).attr("data-state","still")
+    }
+  });
+
+
+
+$(document).on("click", ".btn", displayGIF);
+renderButtons();
+
+</script>
+
+
+</body>
+</html>
